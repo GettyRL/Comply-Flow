@@ -1,0 +1,8 @@
+{
+  "name": "ComplyFlow",
+  "description": "The Regulatory Radar - AI-powered compliance platform with Real-time scanning, Gap Analysis, and Auto-drafting.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ]
+}
