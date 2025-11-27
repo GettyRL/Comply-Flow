@@ -1,7 +1,12 @@
 import React from 'react';
-import { GeoStatus } from '../types';
+import { GeoStatus, AppView } from '../types';
 import { ShieldCheck, AlertTriangle, AlertOctagon, TrendingUp, Globe } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+
+interface DashboardProps {
+    setView: (view: AppView) => void;
+    setSelectedCountry: (country: GeoStatus) => void;
+}
 
 const MOCK_DATA: GeoStatus[] = [
     { country: 'Singapore', code: 'SG', status: 'compliant', score: 92 },
@@ -12,19 +17,22 @@ const MOCK_DATA: GeoStatus[] = [
     { country: 'Australia', code: 'AU', status: 'warning', score: 72 },
 ];
 
-const StatCard = ({ title, value, icon: Icon, colorClass }: any) => (
-    <div className="glass-panel p-6 rounded-xl flex items-center justify-between">
+const StatCard = ({ title, value, icon: Icon, colorClass, onClick }: any) => (
+    <button 
+        onClick={onClick}
+        className="w-full text-left glass-panel p-6 rounded-xl flex items-center justify-between hover:bg-white/5 transition-all group border border-white/10 hover:border-white/20"
+    >
         <div>
-            <p className="text-slate-400 text-sm font-medium mb-1">{title}</p>
+            <p className="text-slate-400 text-sm font-medium mb-1 group-hover:text-slate-300 transition-colors">{title}</p>
             <h3 className="text-2xl font-bold text-white">{value}</h3>
         </div>
-        <div className={`p-3 rounded-lg ${colorClass} bg-opacity-20`}>
+        <div className={`p-3 rounded-lg ${colorClass} bg-opacity-20 group-hover:scale-110 transition-transform`}>
             <Icon size={24} className={colorClass.replace('bg-', 'text-')} />
         </div>
-    </div>
+    </button>
 );
 
-export const Dashboard: React.FC = () => {
+export const Dashboard: React.FC<DashboardProps> = ({ setView, setSelectedCountry }) => {
     return (
         <div className="space-y-8 animate-fade-in">
             <div className="flex justify-between items-end">
@@ -41,10 +49,34 @@ export const Dashboard: React.FC = () => {
 
             {/* Stats Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard title="Global Score" value="82%" icon={ShieldCheck} colorClass="bg-green-500" />
-                <StatCard title="Critical Gaps" value="3" icon={AlertOctagon} colorClass="bg-red-500" />
-                <StatCard title="Active Alerts" value="12" icon={AlertTriangle} colorClass="bg-amber-500" />
-                <StatCard title="Regulations Monitored" value="1,402" icon={Globe} colorClass="bg-blue-500" />
+                <StatCard 
+                    title="Global Score" 
+                    value="82%" 
+                    icon={ShieldCheck} 
+                    colorClass="bg-green-500" 
+                    onClick={() => setView(AppView.COMPLIANCE_DETAILS)}
+                />
+                <StatCard 
+                    title="Critical Gaps" 
+                    value="3" 
+                    icon={AlertOctagon} 
+                    colorClass="bg-red-500"
+                    onClick={() => setView(AppView.COMPLIANCE_DETAILS)}
+                />
+                <StatCard 
+                    title="Active Alerts" 
+                    value="12" 
+                    icon={AlertTriangle} 
+                    colorClass="bg-amber-500"
+                    onClick={() => setView(AppView.COMPLIANCE_DETAILS)}
+                />
+                <StatCard 
+                    title="Regulations Monitored" 
+                    value="1,402" 
+                    icon={Globe} 
+                    colorClass="bg-blue-500"
+                    onClick={() => setView(AppView.COMPLIANCE_DETAILS)}
+                />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -95,7 +127,13 @@ export const Dashboard: React.FC = () => {
                                             </div>
                                         </td>
                                         <td className="py-4 text-right">
-                                            <button className="text-blue-400 hover:text-blue-300 text-xs font-medium">
+                                            <button 
+                                                onClick={() => {
+                                                    setSelectedCountry(geo);
+                                                    setView(AppView.COUNTRY_DETAILS);
+                                                }}
+                                                className="text-blue-400 hover:text-blue-300 text-xs font-medium hover:underline"
+                                            >
                                                 View Details
                                             </button>
                                         </td>
@@ -118,7 +156,7 @@ export const Dashboard: React.FC = () => {
                                 <XAxis dataKey="code" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
                                 <Tooltip 
                                     cursor={{fill: 'rgba(255,255,255,0.05)'}}
-                                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }}
+                                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px', color: '#fff' }}
                                 />
                                 <Bar dataKey="score" radius={[4, 4, 0, 0]}>
                                     {MOCK_DATA.map((entry, index) => (

@@ -9,15 +9,22 @@ import { MediaStudio } from './components/MediaStudio';
 import { ImageEditor } from './components/ImageEditor';
 import { ChatAssistant } from './components/ChatAssistant';
 import { Subscription } from './components/Subscription';
-import { AppView } from './types';
+import { ComplianceDetails } from './components/ComplianceDetails';
+import { CountryDetails } from './components/CountryDetails';
+import { AppView, GeoStatus } from './types';
 
 const App: React.FC = () => {
     const [currentView, setView] = useState<AppView>(AppView.DASHBOARD);
+    const [selectedCountry, setSelectedCountry] = useState<GeoStatus | null>(null);
 
     const renderView = () => {
         switch (currentView) {
             case AppView.DASHBOARD:
-                return <Dashboard />;
+                return <Dashboard setView={setView} setSelectedCountry={setSelectedCountry} />;
+            case AppView.COMPLIANCE_DETAILS:
+                return <ComplianceDetails setView={setView} />;
+            case AppView.COUNTRY_DETAILS:
+                return <CountryDetails country={selectedCountry} setView={setView} />;
             case AppView.SCANNER:
                 return <RegulatoryScanner />;
             case AppView.DRAFTER:
@@ -35,7 +42,7 @@ const App: React.FC = () => {
             case AppView.SUBSCRIPTION:
                 return <Subscription />;
             default:
-                return <Dashboard />;
+                return <Dashboard setView={setView} setSelectedCountry={setSelectedCountry} />;
         }
     };
 
